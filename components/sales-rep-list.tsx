@@ -210,11 +210,11 @@ export function SalesRepList() {
       name,
       email,
       avatar: "/placeholder.svg?height=32&width=32",
-      status: "Aktif",
+      status: "Active",
       assignedLeads: 0,
       assignedAccounts: 0,
       activeDeals: 0,
-      territory: territory || "Atanmamış",
+      territory: territory || "Unassigned",
     }
 
     setSalesReps([...salesReps, newRep])
@@ -242,21 +242,21 @@ export function SalesRepList() {
             <Dialog open={assignLeadsOpen} onOpenChange={setAssignLeadsOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" onClick={handleAssignLeads}>
-                  Potansiyel Müşteri Ata
+                  Assign Leads
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[600px]">
                 <DialogHeader>
-                  <DialogTitle>Potansiyel Müşterileri Satış Temsilcisine Ata</DialogTitle>
-                  <DialogDescription>Potansiyel müşterileri seçin ve bir satış temsilcisine atayın.</DialogDescription>
+                  <DialogTitle>Assign Leads to Sales Representative</DialogTitle>
+                  <DialogDescription>Select leads and assign them to a sales representative.</DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="sales-rep">Satış Temsilcisi Seçin</Label>
+                    <Label htmlFor="sales-rep">Select Sales Representative</Label>
                     <Select value={selectedRepForLeads} onValueChange={setSelectedRepForLeads}>
                       <SelectTrigger id="sales-rep">
-                        <SelectValue placeholder="Bir satış temsilcisi seçin..." />
+                        <SelectValue placeholder="Choose a sales representative..." />
                       </SelectTrigger>
                       <SelectContent>
                         {salesReps
@@ -275,10 +275,10 @@ export function SalesRepList() {
                       <TableHeader>
                         <TableRow>
                           <TableHead className="w-12"></TableHead>
-                          <TableHead>İsim</TableHead>
-                          <TableHead>Şirket</TableHead>
-                          <TableHead>Potansiyel Değeri</TableHead>
-                          <TableHead>Kaynak</TableHead>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Company</TableHead>
+                          <TableHead>Potential Value</TableHead>
+                          <TableHead>Source</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -318,7 +318,7 @@ export function SalesRepList() {
               <DialogTrigger asChild>
                 <Button>
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  Satış Temsilcisi Ekle
+                  Add Sales Rep
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
@@ -340,7 +340,7 @@ export function SalesRepList() {
                       <Label htmlFor="territory">Region</Label>
                       <Select name="territory">
                         <SelectTrigger id="territory">
-                          <SelectValue placeholder="Bir bölge seçin..." />
+                          <SelectValue placeholder="Choose a region..." />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Western Region">Western Region</SelectItem>
@@ -354,7 +354,7 @@ export function SalesRepList() {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button type="submit">Satış Temsilcisi Ekle</Button>
+                    <Button type="submit">Add Sales Representative</Button>
                   </DialogFooter>
                 </form>
               </DialogContent>
@@ -408,7 +408,7 @@ export function SalesRepList() {
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">
                               <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">İşlemler</span>
+                              <span className="sr-only">Actions</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">

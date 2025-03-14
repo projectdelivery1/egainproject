@@ -139,7 +139,7 @@ export function EnhancedVisitorTraffic() {
         hourCounts[hourKey] = (hourCounts[hourKey] || 0) + 1
 
         // Update daily data
-        const dateKey = date.toLocaleDateString()
+        const dateKey = date.toLocaleDateString('en-US')
         if (!dateCounts[dateKey]) {
           dateCounts[dateKey] = { visitors: 0, companies: new Set() }
         }
@@ -149,7 +149,7 @@ export function EnhancedVisitorTraffic() {
         }
 
         // Update monthly data
-        const monthKey = date.toLocaleDateString(undefined, { month: "short" })
+        const monthKey = date.toLocaleDateString('en-US', { month: 'short' })
         if (!monthCounts[monthKey]) {
           monthCounts[monthKey] = { visitors: 0, companies: new Set() }
         }
@@ -168,7 +168,7 @@ export function EnhancedVisitorTraffic() {
 
       const dailyChartData = Object.entries(dateCounts)
         .map(([date, data]) => ({
-          date: new Date(date).toLocaleDateString(undefined, { day: "2-digit", month: "short" }),
+          date: new Date(date).toLocaleDateString('en-US', { day: "2-digit", month: "short" }),
           visitors: data.visitors,
           newCompanies: data.companies.size,
         }))
