@@ -131,7 +131,7 @@ export function EnhancedVisitorTraffic() {
         hourCounts[hour] = (hourCounts[hour] || 0) + 1
 
         // Günlük veri
-        const dateStr = `${date.getDate()} ${["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"][date.getMonth()]}`
+        const dateStr = `${date.getDate()} ${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()]}`
         if (!dateCounts[dateStr]) {
           dateCounts[dateStr] = { visitors: 0, companies: new Set() }
         }
@@ -141,7 +141,7 @@ export function EnhancedVisitorTraffic() {
         }
 
         // Aylık veri
-        const monthStr = ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"][
+        const monthStr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][
           date.getMonth()
         ]
         if (!monthCounts[monthStr]) {
@@ -181,7 +181,7 @@ export function EnhancedVisitorTraffic() {
           newCompanies: data.companies.size,
         }))
         .sort((a, b) => {
-          const months = ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"]
+          const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
           return months.indexOf(a.month) - months.indexOf(b.month)
         })
 

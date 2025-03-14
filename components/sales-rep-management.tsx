@@ -147,16 +147,16 @@ export function SalesRepManagement() {
     setSelectedRep(rep)
     // Gerçek uygulamada, bu bir düzenleme dialogu açacaktır
     toast({
-      title: "Satış Temsilcisini Düzenle",
-      description: `${rep.name} bilgileri düzenleniyor`,
+      title: "Edit Sales Representative",
+      description: `Editing ${rep.name} information`,
     })
   }
 
   const handleDeleteRep = (repId: string) => {
     setSalesReps(salesReps.filter((rep) => rep.id !== repId))
     toast({
-      title: "Satış Temsilcisi Kaldırıldı",
-      description: "Satış temsilcisi sistemden kaldırıldı.",
+      title: "Sales Representative Removed",
+      description: "The sales representative has been removed from the system.",
     })
   }
 
@@ -167,8 +167,8 @@ export function SalesRepManagement() {
   const confirmAssignLeads = () => {
     if (!selectedRepForLeads || selectedLeads.length === 0) {
       toast({
-        title: "Potansiyel müşteriler atanamıyor",
-        description: "Lütfen hem bir satış temsilcisi hem de en az bir potansiyel müşteri seçin.",
+        title: "Leads cannot be assigned",
+        description: "Please select both a sales representative and at least one potential customer.",
         variant: "destructive",
       })
       return
@@ -182,8 +182,8 @@ export function SalesRepManagement() {
     )
 
     toast({
-      title: "Potansiyel Müşteriler Atandı",
-      description: `${selectedLeads.length} potansiyel müşteri ${salesReps.find((rep) => rep.id === selectedRepForLeads)?.name} temsilcisine atandı.`,
+      title: "Leads Assigned",
+      description: `${selectedLeads.length} potential customer assigned to representative ${salesReps.find((rep) => rep.id === selectedRepForLeads)?.name}.`,
     })
 
     setSelectedLeads([])
@@ -198,8 +198,8 @@ export function SalesRepManagement() {
 
     if (!name || !email) {
       toast({
-        title: "Gerekli alanlar eksik",
-        description: "Lütfen tüm gerekli alanları doldurun.",
+        title: "Required fields are missing",
+        description: "Please fill in all required fields.",
         variant: "destructive",
       })
       return
@@ -221,8 +221,8 @@ export function SalesRepManagement() {
     setNewSalesRepOpen(false)
 
     toast({
-      title: "Satış Temsilcisi Eklendi",
-      description: `${name} satış temsilcisi olarak eklendi.`,
+      title: "Sales Representative Added",
+      description: `${name} added as sales representative.`,
     })
   }
 
@@ -253,10 +253,10 @@ export function SalesRepManagement() {
 
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="sales-rep">Satış Temsilcisi Seçin</Label>
+                    <Label htmlFor="sales-rep">Select Sales Representative</Label>
                     <Select value={selectedRepForLeads} onValueChange={setSelectedRepForLeads}>
                       <SelectTrigger id="sales-rep">
-                        <SelectValue placeholder="Bir satış temsilcisi seçin..." />
+                        <SelectValue placeholder="Choose a sales representative..." />
                       </SelectTrigger>
                       <SelectContent>
                         {salesReps
@@ -275,10 +275,10 @@ export function SalesRepManagement() {
                       <TableHeader>
                         <TableRow>
                           <TableHead className="w-12"></TableHead>
-                          <TableHead>İsim</TableHead>
-                          <TableHead>Şirket</TableHead>
-                          <TableHead>Potansiyel Değeri</TableHead>
-                          <TableHead>Kaynak</TableHead>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Company</TableHead>
+                          <TableHead>Potential Value</TableHead>
+                          <TableHead>Source</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -309,7 +309,7 @@ export function SalesRepManagement() {
                   <Button variant="outline" onClick={() => setAssignLeadsOpen(false)}>
                     İptal
                   </Button>
-                  <Button onClick={confirmAssignLeads}>Seçilen Potansiyel Müşterileri Ata</Button>
+                  <Button onClick={confirmAssignLeads}>Assign Selected Leads</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -323,13 +323,13 @@ export function SalesRepManagement() {
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                  <DialogTitle>Satış Temsilcisi Ekle</DialogTitle>
-                  <DialogDescription>Sisteme yeni bir satış temsilcisi ekleyin.</DialogDescription>
+                  <DialogTitle>Add Sales Representative</DialogTitle>
+                  <DialogDescription>Add a new sales representative to the system.</DialogDescription>
                 </DialogHeader>
                 <form action={handleAddSalesRep}>
                   <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                      <Label htmlFor="name">İsim</Label>
+                      <Label htmlFor="name">Name</Label>
                       <Input id="name" name="name" placeholder="John Doe" required />
                     </div>
                     <div className="grid gap-2">
@@ -337,10 +337,10 @@ export function SalesRepManagement() {
                       <Input id="email" name="email" type="email" placeholder="john.doe@egain.com" required />
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="territory">Bölge</Label>
+                      <Label htmlFor="territory">Region</Label>
                       <Select name="territory">
                         <SelectTrigger id="territory">
-                          <SelectValue placeholder="Bir bölge seçin..." />
+                          <SelectValue placeholder="Choose a region..." />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Batı Bölgesi">Western Region</SelectItem>
@@ -354,7 +354,7 @@ export function SalesRepManagement() {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button type="submit">Satış Temsilcisi Ekle</Button>
+                    <Button type="submit">Add Sales Representative</Button>
                   </DialogFooter>
                 </form>
               </DialogContent>
@@ -410,7 +410,7 @@ export function SalesRepManagement() {
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">
                               <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">İşlemler</span>
+                              <span className="sr-only">Transactions</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
@@ -462,15 +462,15 @@ export function SalesRepManagement() {
                     <CardContent>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Atanan Potansiyel Müşteriler</span>
+                          <span className="text-muted-foreground">Assigned Leads</span>
                           <span className="font-medium">{rep.assignedLeads}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Atanan Hesaplar</span>
+                          <span className="text-muted-foreground">Assigned Accounts</span>
                           <span className="font-medium">{rep.assignedAccounts}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Aktif Anlaşmalar</span>
+                          <span className="text-muted-foreground">Active Agreements</span>
                           <span className="font-medium">{rep.activeDeals}</span>
                         </div>
                       </div>
@@ -478,7 +478,7 @@ export function SalesRepManagement() {
                     <div className="border-t p-3 bg-muted/50">
                       <Button variant="outline" size="sm" className="w-full">
                         <User className="mr-2 h-4 w-4" />
-                        Atamaları Görüntüle
+                        View Assignments
                       </Button>
                     </div>
                   </Card>
@@ -488,7 +488,7 @@ export function SalesRepManagement() {
 
           <TabsContent value="performance">
             <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-              Satış temsilcisi performans metrikleri burada görüntülenecek
+            Sales rep performance metrics will be displayed here
             </div>
           </TabsContent>
         </Tabs>

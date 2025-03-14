@@ -476,7 +476,7 @@ export function SalesRepList() {
                     <div className="border-t p-3 bg-muted/50">
                       <Button variant="outline" size="sm" className="w-full">
                         <User className="mr-2 h-4 w-4" />
-                        Atamaları Görüntüle
+                        View Assignments
                       </Button>
                     </div>
                   </Card>
