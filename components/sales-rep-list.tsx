@@ -30,7 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-// Örnek satış temsilcileri verileri
+// Example sales representatives data
 const initialSalesReps = [
   {
     id: "1",
@@ -70,7 +70,7 @@ const initialSalesReps = [
     name: "Robert Johnson",
     email: "r.johnson@egain.com",
     avatar: "/avatars/04.png",
-    status: "Pasif",
+    status: "Inactive",
     assignedLeads: 0,
     assignedAccounts: 8,
     activeDeals: 0,
@@ -89,7 +89,7 @@ const initialSalesReps = [
   },
 ]
 
-// Örnek atanmamış potansiyel müşteriler
+// Example unassigned leads
 const unassignedLeads = [
   {
     id: "lead1",
@@ -97,7 +97,7 @@ const unassignedLeads = [
     company: "TechCorp Inc.",
     email: "alex.j@techcorp.com",
     leadScore: 92,
-    source: "Web Sitesi",
+    source: "Website",
   },
   {
     id: "lead2",
@@ -113,7 +113,7 @@ const unassignedLeads = [
     company: "Global Solutions",
     email: "dkim@globalsolutions.org",
     leadScore: 78,
-    source: "Web Sitesi",
+    source: "Website",
   },
   {
     id: "lead4",
@@ -129,7 +129,7 @@ const unassignedLeads = [
     company: "Apex Networks",
     email: "jwilson@apex.net",
     leadScore: 68,
-    source: "E-posta Kampanyası",
+    source: "Email Campaign",
   },
 ]
 
@@ -145,7 +145,7 @@ export function SalesRepList() {
 
   const handleEditRep = (rep: (typeof initialSalesReps)[0]) => {
     setSelectedRep(rep)
-    // Gerçek uygulamada, bu bir düzenleme dialogu açacaktır
+    // In a real application, this would open an editing dialog
     toast({
       title: "Edit Sales Representative",
       description: `Editing ${rep.name}'s information`,
@@ -167,14 +167,14 @@ export function SalesRepList() {
   const confirmAssignLeads = () => {
     if (!selectedRepForLeads || selectedLeads.length === 0) {
       toast({
-        title: "Potansiyel müşteriler atanamıyor",
-        description: "Lütfen hem bir satış temsilcisi hem de en az bir potansiyel müşteri seçin.",
+        title: "Leads cannot be assigned",
+        description: "Please select both a sales representative and at least one lead.",
         variant: "destructive",
       })
       return
     }
 
-    // Seçilen temsilcinin potansiyel müşteri sayısını güncelle
+    // Update the selected representative's lead count
     setSalesReps((prevReps) =>
       prevReps.map((rep) =>
         rep.id === selectedRepForLeads ? { ...rep, assignedLeads: rep.assignedLeads + selectedLeads.length } : rep,
@@ -182,8 +182,8 @@ export function SalesRepList() {
     )
 
     toast({
-      title: "Potansiyel Müşteriler Atandı",
-      description: `${selectedLeads.length} potansiyel müşteri ${salesReps.find((rep) => rep.id === selectedRepForLeads)?.name} temsilcisine atandı.`,
+      title: "Leads Assigned",
+      description: `${selectedLeads.length} leads assigned to representative ${salesReps.find((rep) => rep.id === selectedRepForLeads)?.name}.`,
     })
 
     setSelectedLeads([])
@@ -260,7 +260,7 @@ export function SalesRepList() {
                       </SelectTrigger>
                       <SelectContent>
                         {salesReps
-                          .filter((rep) => rep.status === "Aktif")
+                          .filter((rep) => rep.status === "Active")
                           .map((rep) => (
                             <SelectItem key={rep.id} value={rep.id}>
                               {rep.name}
@@ -442,7 +442,7 @@ export function SalesRepList() {
           <TabsContent value="assignments">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {salesReps
-                .filter((rep) => rep.status === "Aktif")
+                .filter((rep) => rep.status === "Active")
                 .map((rep) => (
                   <Card key={rep.id} className="overflow-hidden">
                     <CardHeader className="pb-2">

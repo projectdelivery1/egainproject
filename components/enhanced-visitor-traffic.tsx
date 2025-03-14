@@ -26,10 +26,10 @@ export function EnhancedVisitorTraffic() {
   const [monthlyData, setMonthlyData] = useState<any[]>([])
   const { logs } = useLogStore()
 
-  // Zaman ölçeğine göre grafik verilerini oluştur
+  // Create chart data according to time scale
   useEffect(() => {
     if (logs.length === 0) {
-      // Demo için örnek veriler
+      // Sample data for demo
       setDailyData([
         { date: "8 Mar", visitors: 124, newCompanies: 4 },
         { date: "9 Mar", visitors: 115, newCompanies: 2 },
@@ -56,32 +56,32 @@ export function EnhancedVisitorTraffic() {
       ])
 
       setMonthlyData([
-        { month: "Eki", visitors: 2245, newCompanies: 85 },
-        { month: "Kas", visitors: 2190, newCompanies: 78 },
-        { month: "Ara", visitors: 1845, newCompanies: 62 },
-        { month: "Oca", visitors: 2354, newCompanies: 92 },
-        { month: "Şub", visitors: 2580, newCompanies: 105 },
+        { month: "Oct", visitors: 2245, newCompanies: 85 },
+        { month: "Nov", visitors: 2190, newCompanies: 78 },
+        { month: "Dec", visitors: 1845, newCompanies: 62 },
+        { month: "Jan", visitors: 2354, newCompanies: 92 },
+        { month: "Feb", visitors: 2580, newCompanies: 105 },
         { month: "Mar", visitors: 2853, newCompanies: 112 },
       ])
 
       return
     }
 
-    // Log verilerinden zaman bazlı verileri oluştur
+    // Create time-based data from log data
     try {
-      // Saatlik veriler
+      // Hourly data
       const hourCounts: Record<string, number> = {}
-      // Günlük veriler
+      // Daily data
       const dateCounts: Record<string, { visitors: number; companies: Set<string> }> = {}
-      // Aylık veriler
+      // Monthly data
       const monthCounts: Record<string, { visitors: number; companies: Set<string> }> = {}
 
-      // Zaman dilimi ayarlaması
+      // Time zone adjustment
       const getAdjustedDate = (timestamp: string) => {
         try {
           const date = new Date(timestamp)
           if (isNaN(date.getTime())) {
-            // Alternatif format denemesi (01/Feb/2025:00:17:10)
+            // Alternative format attempt (01/Feb/2025:00:17:10)
             if (timestamp.includes("/")) {
               const parts = timestamp.split("/")
               const day = parts[0]
@@ -100,10 +100,17 @@ export function EnhancedVisitorTraffic() {
             return null
           }
 
-          // Zaman dilimi ayarlaması
+          // Time zone adjustment
           if (timeZone === "utc") {
-            // UTC'ye dönüştür
-            return new Date(date.getTime() + date.getTimezoneOffset() * 60000)
+            // Convert to UTC
+            return new Date(
+              date.getUTCFullYear(),
+              date.getUTCMonth(),
+              date.getUTCDate(),
+              date.getUTCHours(),
+              date.getUTCMinutes(),
+              date.getUTCSeconds(),
+            )
           } else if (timeZone === "est") {
             // EST (UTC-5)
             return new Date(date.getTime() + (date.getTimezoneOffset() + 300) * 60000)
@@ -116,65 +123,59 @@ export function EnhancedVisitorTraffic() {
           }
 
           return date
-        } catch (error) {
-          console.error("Date parsing error:", error)
+        } catch (e) {
+          console.error("Date parsing error:", e)
           return null
         }
       }
 
+      // Process each log
       logs.forEach((log) => {
         const date = getAdjustedDate(log.timestamp)
         if (!date) return
 
-        // Saatlik veri
-        const hour = `${date.getHours().toString().padStart(2, "0")}:00`
-        hourCounts[hour] = (hourCounts[hour] || 0) + 1
+        // Update hourly data
+        const hourKey = `${date.getHours().toString().padStart(2, "0")}:00`
+        hourCounts[hourKey] = (hourCounts[hourKey] || 0) + 1
 
-        // Günlük veri
-        const dateStr = `${date.getDate()} ${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()]}`
-        if (!dateCounts[dateStr]) {
-          dateCounts[dateStr] = { visitors: 0, companies: new Set() }
+        // Update daily data
+        const dateKey = date.toLocaleDateString()
+        if (!dateCounts[dateKey]) {
+          dateCounts[dateKey] = { visitors: 0, companies: new Set() }
         }
-        dateCounts[dateStr].visitors++
-        if (log.domain && log.domain !== "-") {
-          dateCounts[dateStr].companies.add(log.domain)
+        dateCounts[dateKey].visitors++
+        if (log.company) {
+          dateCounts[dateKey].companies.add(log.company)
         }
 
-        // Aylık veri
-        const monthStr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][
-          date.getMonth()
-        ]
-        if (!monthCounts[monthStr]) {
-          monthCounts[monthStr] = { visitors: 0, companies: new Set() }
+        // Update monthly data
+        const monthKey = date.toLocaleDateString(undefined, { month: "short" })
+        if (!monthCounts[monthKey]) {
+          monthCounts[monthKey] = { visitors: 0, companies: new Set() }
         }
-        monthCounts[monthStr].visitors++
-        if (log.domain && log.domain !== "-") {
-          monthCounts[monthStr].companies.add(log.domain)
+        monthCounts[monthKey].visitors++
+        if (log.company) {
+          monthCounts[monthKey].companies.add(log.company)
         }
       })
 
-      // Verileri grafik formatına dönüştür
-      const hourlyDataArray = Object.entries(hourCounts)
-        .map(([hour, visitors]) => ({ hour, visitors }))
+      // Convert to chart data format
+      const hourlyChartData = Object.entries(hourCounts)
+        .map(([hour, count]) => ({ hour, visitors: count }))
         .sort((a, b) => {
-          const hourA = Number.parseInt(a.hour.split(":")[0])
-          const hourB = Number.parseInt(b.hour.split(":")[0])
-          return hourA - hourB
+          return parseInt(a.hour) - parseInt(b.hour)
         })
 
-      const dailyDataArray = Object.entries(dateCounts)
+      const dailyChartData = Object.entries(dateCounts)
         .map(([date, data]) => ({
-          date,
+          date: new Date(date).toLocaleDateString(undefined, { day: "2-digit", month: "short" }),
           visitors: data.visitors,
           newCompanies: data.companies.size,
         }))
-        .sort((a, b) => {
-          const dateA = a.date.split(" ")[0]
-          const dateB = b.date.split(" ")[0]
-          return Number.parseInt(dateA) - Number.parseInt(dateB)
-        })
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .slice(-7) // Last 7 days
 
-      const monthlyDataArray = Object.entries(monthCounts)
+      const monthlyChartData = Object.entries(monthCounts)
         .map(([month, data]) => ({
           month,
           visitors: data.visitors,
@@ -184,110 +185,144 @@ export function EnhancedVisitorTraffic() {
           const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
           return months.indexOf(a.month) - months.indexOf(b.month)
         })
+        .slice(-6) // Last 6 months
 
-      // Veri varsa güncelle, yoksa örnek verileri kullan
-      if (hourlyDataArray.length > 0) setHourlyData(hourlyDataArray)
-      if (dailyDataArray.length > 0) setDailyData(dailyDataArray)
-      if (monthlyDataArray.length > 0) setMonthlyData(monthlyDataArray)
+      setHourlyData(hourlyChartData)
+      setDailyData(dailyChartData)
+      setMonthlyData(monthlyChartData)
     } catch (error) {
-      console.error("Error processing log data for traffic charts:", error)
+      console.error("Error processing visitor traffic data:", error)
     }
   }, [logs, timeZone])
 
   return (
     <Card className="col-span-4">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle>Visitor Traffic Overview</CardTitle>
-          <CardDescription>Track visitor activity over time</CardDescription>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Select value={timeZone} onValueChange={setTimeZone}>
-            <SelectTrigger className="w-[130px]">
-              <SelectValue placeholder="Time zone" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="local">Local Time</SelectItem>
-              <SelectItem value="utc">UTC</SelectItem>
-              <SelectItem value="est">EST (UTC-5)</SelectItem>
-              <SelectItem value="pst">PST (UTC-8)</SelectItem>
-              <SelectItem value="cet">CET (UTC+1)</SelectItem>
-            </SelectContent>
-          </Select>
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+          <div>
+            <CardTitle>Visitor Traffic</CardTitle>
+            <CardDescription>Visitor traffic analysis over time</CardDescription>
+          </div>
+          <div className="flex space-x-2">
+            <Select value={timeScale} onValueChange={setTimeScale}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="Time Scale" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="hourly">Hourly</SelectItem>
+                <SelectItem value="daily">Daily</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={timeZone} onValueChange={setTimeZone}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="Time Zone" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="local">Local Time</SelectItem>
+                <SelectItem value="utc">UTC</SelectItem>
+                <SelectItem value="est">EST (UTC-5)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="daily" onValueChange={setTimeScale}>
-          <TabsList className="mb-4">
-            <TabsTrigger value="hourly">Hourly</TabsTrigger>
-            <TabsTrigger value="daily">Daily</TabsTrigger>
-            <TabsTrigger value="monthly">Monthly</TabsTrigger>
+        <Tabs defaultValue="visitors" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="visitors">Visitors</TabsTrigger>
+            <TabsTrigger value="companies">Companies</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="hourly" className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={hourlyData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="hour" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="visitors" name="Visitors" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <TabsContent value="visitors" className="space-y-4">
+            <div className="h-[300px]">
+              {timeScale === "hourly" && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={hourlyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="hour" />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) => [`${value} visitors`, "Visitors"]}
+                      labelFormatter={(label) => `Time: ${label}`}
+                    />
+                    <Bar dataKey="visitors" fill="#8884d8" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+              {timeScale === "daily" && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={dailyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number, name: string) => [
+                        `${value} ${name === "visitors" ? "visitors" : "new companies"}`,
+                        name === "visitors" ? "Visitors" : "New Companies",
+                      ]}
+                      labelFormatter={(label) => `Date: ${label}`}
+                    />
+                    <Legend />
+                    <Area type="monotone" dataKey="visitors" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
+              {timeScale === "monthly" && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={monthlyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number, name: string) => [
+                        `${value} ${name === "visitors" ? "visitors" : "new companies"}`,
+                        name === "visitors" ? "Visitors" : "New Companies",
+                      ]}
+                      labelFormatter={(label) => `Month: ${label}`}
+                    />
+                    <Legend />
+                    <Bar dataKey="visitors" fill="#8884d8" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
           </TabsContent>
-
-          <TabsContent value="daily" className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={dailyData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Area
-                  type="monotone"
-                  dataKey="visitors"
-                  name="Visitors"
-                  stroke="hsl(var(--primary))"
-                  fill="hsl(var(--primary)/0.2)"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="newCompanies"
-                  name="New Companies"
-                  stroke="hsl(var(--primary)/0.6)"
-                  fill="hsl(var(--primary)/0.1)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </TabsContent>
-
-          <TabsContent value="monthly" className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="month" />
-                <YAxis yAxisId="left" />
-                <YAxis yAxisId="right" orientation="right" />
-                <Tooltip />
-                <Legend />
-                <Bar
-                  yAxisId="left"
-                  dataKey="visitors"
-                  name="Visitors"
-                  fill="hsl(var(--primary))"
-                  radius={[4, 4, 0, 0]}
-                />
-                <Bar
-                  yAxisId="right"
-                  dataKey="newCompanies"
-                  name="New Companies"
-                  fill="hsl(var(--primary)/0.6)"
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+          <TabsContent value="companies" className="space-y-4">
+            <div className="h-[300px]">
+              {timeScale === "daily" && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={dailyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) => [`${value} companies`, "New Companies"]}
+                      labelFormatter={(label) => `Date: ${label}`}
+                    />
+                    <Bar dataKey="newCompanies" fill="#82ca9d" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+              {timeScale === "monthly" && (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={monthlyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) => [`${value} companies`, "New Companies"]}
+                      labelFormatter={(label) => `Month: ${label}`}
+                    />
+                    <Bar dataKey="newCompanies" fill="#82ca9d" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+              {timeScale === "hourly" && (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  Company data is not available in hourly view
+                </div>
+              )}
+            </div>
           </TabsContent>
         </Tabs>
       </CardContent>

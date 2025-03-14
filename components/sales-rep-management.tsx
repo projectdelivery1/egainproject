@@ -30,7 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-// Örnek satış temsilcileri verileri
+// Example sales representatives data
 const initialSalesReps = [
   {
     id: "1",
@@ -89,7 +89,7 @@ const initialSalesReps = [
   },
 ]
 
-// Örnek atanmamış potansiyel müşteriler
+// Example unassigned leads
 const unassignedLeads = [
   {
     id: "lead1",
@@ -97,7 +97,7 @@ const unassignedLeads = [
     company: "TechCorp Inc.",
     email: "alex.j@techcorp.com",
     leadScore: 92,
-    source: "Web Sitesi",
+    source: "Website",
   },
   {
     id: "lead2",
@@ -113,7 +113,7 @@ const unassignedLeads = [
     company: "Global Solutions",
     email: "dkim@globalsolutions.org",
     leadScore: 78,
-    source: "Web Sitesi",
+    source: "Website",
   },
   {
     id: "lead4",
@@ -129,7 +129,7 @@ const unassignedLeads = [
     company: "Apex Networks",
     email: "jwilson@apex.net",
     leadScore: 68,
-    source: "E-posta Kampanyası",
+    source: "Email Campaign",
   },
 ]
 
@@ -145,7 +145,7 @@ export function SalesRepManagement() {
 
   const handleEditRep = (rep: (typeof initialSalesReps)[0]) => {
     setSelectedRep(rep)
-    // Gerçek uygulamada, bu bir düzenleme dialogu açacaktır
+    // In a real application, this would open an editing dialog
     toast({
       title: "Edit Sales Representative",
       description: `Editing ${rep.name} information`,
@@ -174,7 +174,7 @@ export function SalesRepManagement() {
       return
     }
 
-    // Seçilen temsilcinin potansiyel müşteri sayısını güncelle
+    // Update the selected representative's lead count
     setSalesReps((prevReps) =>
       prevReps.map((rep) =>
         rep.id === selectedRepForLeads ? { ...rep, assignedLeads: rep.assignedLeads + selectedLeads.length } : rep,
@@ -247,8 +247,8 @@ export function SalesRepManagement() {
               </DialogTrigger>
               <DialogContent className="sm:max-w-[600px]">
                 <DialogHeader>
-                  <DialogTitle>Potansiyel Müşterileri Satış Temsilcisine Ata</DialogTitle>
-                  <DialogDescription>Potansiyel müşterileri seçin ve bir satış temsilcisine atayın.</DialogDescription>
+                  <DialogTitle>Assign Leads to Sales Representative</DialogTitle>
+                  <DialogDescription>Select potential customers and assign them to a sales representative.</DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
@@ -307,7 +307,7 @@ export function SalesRepManagement() {
 
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setAssignLeadsOpen(false)}>
-                    İptal
+                    Cancel
                   </Button>
                   <Button onClick={confirmAssignLeads}>Assign Selected Leads</Button>
                 </DialogFooter>
@@ -333,7 +333,7 @@ export function SalesRepManagement() {
                       <Input id="name" name="name" placeholder="John Doe" required />
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="email">E-posta</Label>
+                      <Label htmlFor="email">Email</Label>
                       <Input id="email" name="email" type="email" placeholder="john.doe@egain.com" required />
                     </div>
                     <div className="grid gap-2">
@@ -343,12 +343,12 @@ export function SalesRepManagement() {
                           <SelectValue placeholder="Choose a region..." />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Batı Bölgesi">Western Region</SelectItem>
-                          <SelectItem value="Doğu Bölgesi">Eastern Region</SelectItem>
-                          <SelectItem value="Orta Bölge">Central Region</SelectItem>
-                          <SelectItem value="Güneybatı">Southwest</SelectItem>
-                          <SelectItem value="Güneydoğu">Southeast</SelectItem>
-                          <SelectItem value="Uluslararası">International</SelectItem>
+                          <SelectItem value="Western Region">Western Region</SelectItem>
+                          <SelectItem value="Eastern Region">Eastern Region</SelectItem>
+                          <SelectItem value="Central Region">Central Region</SelectItem>
+                          <SelectItem value="Southwest">Southwest</SelectItem>
+                          <SelectItem value="Southeast">Southeast</SelectItem>
+                          <SelectItem value="International">International</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -398,8 +398,8 @@ export function SalesRepManagement() {
                       </TableCell>
                       <TableCell>{rep.email}</TableCell>
                       <TableCell>
-                        <Badge variant={rep.status === "Aktif" ? "default" : "secondary"}>
-                          {rep.status === "Aktif" ? "Active" : "Inactive"}
+                        <Badge variant={rep.status === "Active" ? "default" : "secondary"}>
+                          {rep.status === "Active" ? "Active" : "Inactive"}
                         </Badge>
                       </TableCell>
                       <TableCell>{rep.territory}</TableCell>
