@@ -26,18 +26,18 @@ export function VisitorTrafficOverview() {
   const [monthlyData, setMonthlyData] = useState<any[]>([])
   const { logs } = useLogStore()
 
-  // Zaman ölçeğine göre grafik verilerini oluştur
+  // Generate chart data based on time scale
   useEffect(() => {
     if (logs.length === 0) {
-      // Demo için örnek veriler
+      // Example data for demo purposes
       setDailyData([
-        { date: "8 Mar", visitors: 124, newCompanies: 4 },
-        { date: "9 Mar", visitors: 115, newCompanies: 2 },
-        { date: "10 Mar", visitors: 186, newCompanies: 6 },
-        { date: "11 Mar", visitors: 195, newCompanies: 7 },
-        { date: "12 Mar", visitors: 220, newCompanies: 8 },
-        { date: "13 Mar", visitors: 173, newCompanies: 5 },
-        { date: "14 Mar", visitors: 88, newCompanies: 3 },
+        { date: "Mar 8", visitors: 124, newCompanies: 4 },
+        { date: "Mar 9", visitors: 115, newCompanies: 2 },
+        { date: "Mar 10", visitors: 186, newCompanies: 6 },
+        { date: "Mar 11", visitors: 195, newCompanies: 7 },
+        { date: "Mar 12", visitors: 220, newCompanies: 8 },
+        { date: "Mar 13", visitors: 173, newCompanies: 5 },
+        { date: "Mar 14", visitors: 88, newCompanies: 3 },
       ])
 
       setHourlyData([
@@ -56,35 +56,32 @@ export function VisitorTrafficOverview() {
       ])
 
       setMonthlyData([
-        { month: "Eki", visitors: 2245, newCompanies: 85 },
-        { month: "Kas", visitors: 2190, newCompanies: 78 },
-        { month: "Ara", visitors: 1845, newCompanies: 62 },
-        { month: "Oca", visitors: 2354, newCompanies: 92 },
-        { month: "Şub", visitors: 2580, newCompanies: 105 },
+        { month: "Oct", visitors: 2245, newCompanies: 85 },
+        { month: "Nov", visitors: 2190, newCompanies: 78 },
+        { month: "Dec", visitors: 1845, newCompanies: 62 },
+        { month: "Jan", visitors: 2354, newCompanies: 92 },
+        { month: "Feb", visitors: 2580, newCompanies: 105 },
         { month: "Mar", visitors: 2853, newCompanies: 112 },
       ])
 
       return
     }
-
-    // Gerçek uygulamada, burada zaman damgasına göre log verilerini işleyeceğiz
-    // Şimdilik yukarıdaki örnek verileri kullanacağız
   }, [logs, timeZone])
 
   return (
     <Card className="col-span-4">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle>Ziyaretçi Trafiği Genel Bakış</CardTitle>
-          <CardDescription>Zaman içindeki ziyaretçi aktivitesini takip edin</CardDescription>
+          <CardTitle>Visitor Traffic Overview</CardTitle>
+          <CardDescription>Track visitor activity over time</CardDescription>
         </div>
         <div className="flex items-center space-x-2">
           <Select value={timeZone} onValueChange={setTimeZone}>
             <SelectTrigger className="w-[130px]">
-              <SelectValue placeholder="Saat dilimi" />
+              <SelectValue placeholder="Time Zone" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="local">Yerel Saat</SelectItem>
+              <SelectItem value="local">Local Time</SelectItem>
               <SelectItem value="utc">UTC</SelectItem>
               <SelectItem value="est">EST (UTC-5)</SelectItem>
               <SelectItem value="pst">PST (UTC-8)</SelectItem>
@@ -96,9 +93,9 @@ export function VisitorTrafficOverview() {
       <CardContent>
         <Tabs defaultValue="daily" onValueChange={setTimeScale}>
           <TabsList className="mb-4">
-            <TabsTrigger value="hourly">Saatlik</TabsTrigger>
-            <TabsTrigger value="daily">Günlük</TabsTrigger>
-            <TabsTrigger value="monthly">Aylık</TabsTrigger>
+            <TabsTrigger value="hourly">Hourly</TabsTrigger>
+            <TabsTrigger value="daily">Daily</TabsTrigger>
+            <TabsTrigger value="monthly">Monthly</TabsTrigger>
           </TabsList>
 
           <TabsContent value="hourly" className="h-[300px]">
@@ -109,7 +106,7 @@ export function VisitorTrafficOverview() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="visitors" name="Ziyaretçiler" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="visitors" name="Visitors" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </TabsContent>
@@ -125,14 +122,14 @@ export function VisitorTrafficOverview() {
                 <Area
                   type="monotone"
                   dataKey="visitors"
-                  name="Ziyaretçiler"
+                  name="Visitors"
                   stroke="hsl(var(--primary))"
                   fill="hsl(var(--primary)/0.2)"
                 />
                 <Area
                   type="monotone"
                   dataKey="newCompanies"
-                  name="Yeni Şirketler"
+                  name="New Companies"
                   stroke="hsl(var(--primary)/0.6)"
                   fill="hsl(var(--primary)/0.1)"
                 />
@@ -149,12 +146,13 @@ export function VisitorTrafficOverview() {
                 <YAxis yAxisId="right" orientation="right" />
                 <Tooltip />
                 <Legend />
-                <Bar yAxisId="left" dataKey="visitors" name="Ziyaretçiler" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                <Bar yAxisId="right" dataKey="newCompanies" name="Yeni Şirketler" fill="hsl(var(--primary)/0.6)" radius={[4, 4, 0, 0]} />
+                <Bar yAxisId="left" dataKey="visitors" name="Visitors" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <Bar yAxisId="right" dataKey="newCompanies" name="New Companies" fill="hsl(var(--primary)/0.6)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </TabsContent>
         </Tabs>
       </CardContent>
-    </Card>\
-
+    </Card>
+  )
+}
